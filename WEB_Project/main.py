@@ -23,10 +23,11 @@ class BotStatesGroup(StatesGroup):
     thursday = State()
     friday = State()
     saturday = State()
-    homework = State()
     new_schedule = State()
     mark_and_lesson = State()
     lesson = State()
+    lesson_to_homework = State()
+    homework = State()
 
 
 # сделать заполнение словаря уроков когда создается новое расписание
@@ -65,7 +66,8 @@ async def process_callback_help_commands(callback_query: types.CallbackQuery):
     if code == 0:
         await bot.send_message(callback_query.from_user.id, reply_markup=week_days_keyboard, text="Выбери день недели:")
     elif code == 1:
-        pass
+        await bot.send_message(callback_query.from_user.id, text="Введи предмет по которому хочешь занести дз")
+        await BotStatesGroup.lesson_to_homework.set()
     elif code == 2:
         await bot.send_message(callback_query.from_user.id, text="Введи предмет, а затем оценку в этом же сообщении")
         await BotStatesGroup.mark_and_lesson.set()
@@ -80,6 +82,14 @@ async def process_callback_week_days_commands(callback_query: types.CallbackQuer
     day_info = database.select_day(code)
     await bot.send_message(callback_query.from_user.id, text="Расписание:",
                            reply_markup=schedule.return_keyboard(day_info[1]))
+
+
+@dp.callback_query_handler(lambda c: c.data and c.data.startswith('lesson'))
+async def process_callback_week_days_commands(callback_query: types.CallbackQuery):
+    lesson = callback_query.data[6:]
+    homework = database.return_homework(lesson)
+    await bot.send_message(callback_query.from_user.id, text="Домашняя работа по выбранному предмету")
+    await bot.send_message(callback_query.from_user.id, text=homework)
 
 
 @dp.message_handler(state=BotStatesGroup.monday)
@@ -157,8 +167,28 @@ async def load_monday(message: types.Message, state: FSMContext):
     res = database.return_marks(data)
     await message.reply("Вот ваши оценки")
     await bot.send_message(message.from_user.id,
-                           text=f"Список оценок: {' '.join(res[0][1:])}\nСреднее арифмитическое: {round(res[1], 2)}")
+                           text=f"Список оценок: {' '.join([str(i) for i in res[0][1:]])}\nСреднее арифмитическое: {round(res[1], 2)}")
 
+    await state.finish()
+
+
+@dp.message_handler(state=BotStatesGroup.lesson_to_homework)
+async def load_monday(message: types.Message, state: FSMContext):
+    async with state.proxy() as data_homework:
+        data_homework["lesson"] = message.text
+
+    await bot.send_message(message.from_user.id, text="Введите домашнее задание по предмету")
+    await BotStatesGroup.next()
+
+
+@dp.message_handler(state=BotStatesGroup.homework)
+async def load_monday(message: types.Message, state: FSMContext):
+    print("+")
+    async with state.proxy() as data_homework:
+        data_homework["homework"] = message.text
+
+    database.enter_homework(data_homework["lesson"], data_homework["homework"])
+    await bot.send_message(message.from_user.id, text="Домашнее задание успешно обновлено")
     await state.finish()
 
 

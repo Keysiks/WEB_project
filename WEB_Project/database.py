@@ -58,3 +58,10 @@ class Database:
 
     def return_lessons(self):
         return self.lst
+
+    def enter_homework(self, lesson, homework):
+        self.cursor.execute(f"""UPDATE lessons SET homework='{homework}' WHERE lesson_name={(f'"{lesson.lower()}"')}""")
+        self.connection.commit()
+
+    def return_homework(self, lesson):
+        return self.cursor.execute(f"""SELECT homework FROM lessons WHERE lesson_name={(f'"{lesson.lower()}"')}""").fetchone()
