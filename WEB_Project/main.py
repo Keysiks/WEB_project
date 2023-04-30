@@ -102,7 +102,7 @@ async def load_monday(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=BotStatesGroup.tuesday)
-async def load_monday(message: types.Message, state: FSMContext):
+async def load_tuesday(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data[1] = message.text
 
@@ -111,7 +111,7 @@ async def load_monday(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=BotStatesGroup.wednesday)
-async def load_monday(message: types.Message, state: FSMContext):
+async def load_wednesday(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data[2] = message.text
 
@@ -120,7 +120,7 @@ async def load_monday(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=BotStatesGroup.thursday)
-async def load_monday(message: types.Message, state: FSMContext):
+async def load_thursday(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data[3] = message.text
 
@@ -129,7 +129,7 @@ async def load_monday(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=BotStatesGroup.friday)
-async def load_monday(message: types.Message, state: FSMContext):
+async def load_friday(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data[4] = message.text
 
@@ -138,7 +138,7 @@ async def load_monday(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=BotStatesGroup.saturday)
-async def load_monday(message: types.Message, state: FSMContext):
+async def load_saturday(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data[5] = message.text
 
@@ -148,7 +148,7 @@ async def load_monday(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=BotStatesGroup.mark_and_lesson)
-async def load_monday(message: types.Message, state: FSMContext):
+async def load_mark_lessons(message: types.Message, state: FSMContext):
     async with state.proxy() as data_mark:
         data_mark[0] = message.text
 
@@ -159,7 +159,7 @@ async def load_monday(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=BotStatesGroup.lesson)
-async def load_monday(message: types.Message, state: FSMContext):
+async def load_lesson(message: types.Message, state: FSMContext):
     async with state.proxy() as data_lesson:
         data_lesson[0] = message.text
 
@@ -173,7 +173,7 @@ async def load_monday(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=BotStatesGroup.lesson_to_homework)
-async def load_monday(message: types.Message, state: FSMContext):
+async def load_lesson_to_homework(message: types.Message, state: FSMContext):
     async with state.proxy() as data_homework:
         data_homework["lesson"] = message.text
 
